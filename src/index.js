@@ -1,9 +1,11 @@
-import message from './message.js';
+// import message from './message.js';
 
-function component() {
-  var element = document.createElement('div');
-  element.innerHTML = message;
-  return element;
-}
-  
-document.body.appendChild(component());
+// TODO:
+// Create tetris grid cell object
+// Create current game state
+// Render game state function
+
+var canvas = document.getElementById('myCanvas');
+var ctx = canvas.getContext('2d');
+ctx.fillStyle = 'blue';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
