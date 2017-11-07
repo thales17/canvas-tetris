@@ -1,11 +1,12 @@
-// import message from './message.js';
+import Game from './game.js';
 
 // TODO:
-// Create tetris grid cell object
-// Create current game state
-// Render game state function
+// Implement the render board function
+function init() {
+  var canvas = document.getElementById('myCanvas');
+  new Game(canvas);
+}
 
-var canvas = document.getElementById('myCanvas');
-var ctx = canvas.getContext('2d');
-ctx.fillStyle = 'blue';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+init();
+
+
