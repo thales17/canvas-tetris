@@ -8,7 +8,12 @@ class Game {
     this.canvas = canvas;
     this.renderer = new Renderer(canvas);
     this.board = new Board();
-    this.render();
+    const render = () => {
+      this.renderer.renderBoard(this.board);
+      requestAnimationFrame(render);
+    };
+    this.randomBoard();
+    render();
   }
 
   randomBoard() {
@@ -19,11 +24,6 @@ class Game {
         this.board.setGridItem(new GridCell(randomType), r, c);
       }
     }
-  }
-
-  render() {
-    this.renderer.renderBoard(this.board);
-    requestAnimationFrame(this.render);
   }
 }
 
