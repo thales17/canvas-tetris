@@ -2,7 +2,7 @@ import Board from "./board";
 import GridCell from "./gridCell";
 import TetrisType from "./tetrisType";
 
-class Renderer {
+class DefaultRenderer {
   private canvas: HTMLCanvasElement ;
   private ctx: CanvasRenderingContext2D;
   private blockSize: number;
@@ -45,4 +45,4 @@ class Renderer {
   }
 }
 
-export default Renderer;
+export default DefaultRenderer;

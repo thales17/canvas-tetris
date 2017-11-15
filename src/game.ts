@@ -1,15 +1,16 @@
 import Board from "./board";
+import DefaultRenderer from "./defaultRenderer";
 import GridCell from "./gridCell";
-import Renderer from "./renderer";
+import IRenderer from "./irenderer";
 import TetrisType from "./tetrisType";
 
 class Game {
   private canvas: HTMLCanvasElement;
-  private renderer: Renderer;
+  private renderer: IRenderer;
   private board: Board;
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    this.renderer = new Renderer(canvas);
+    this.renderer = new DefaultRenderer(canvas);
     this.board = new Board();
     const render = () => {
       // this.randomBoard();
