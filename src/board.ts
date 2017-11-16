@@ -28,7 +28,7 @@ class Board {
     this.data[index] = gridCell;
   }
 
-  public getGridItem(row: number, col: number): GridCell {
+  public getGridCell(row: number, col: number): GridCell {
     const index = this.indexForRowCol(row, col);
     if (index === null || index === undefined) {
       return;

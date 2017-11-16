@@ -29,8 +29,8 @@ class DefaultRenderer {
     const yOffset: number = (this.canvas.height - (board.height * this.blockSize)) / 2;
     for (let r = 0; r < board.height; r++) {
       for (let c = 0; c < board.width; c++) {
-        if (board.getGridItem(r, c)) {
-          this.renderBlock(xOffset, yOffset, r, c, board.getGridItem(r, c));
+        if (board.getGridCell(r, c)) {
+          this.renderBlock(xOffset, yOffset, r, c, board.getGridCell(r, c));
         }
       }
     }
