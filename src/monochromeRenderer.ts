@@ -2,6 +2,11 @@ import Board from "./board";
 import GridCell from "./gridCell";
 import TetrisType from "./tetrisType";
 
+const darkest: string = "#0f380f";
+const dark: string = "#306230";
+const light: string = "#8bac0f";
+const lightest: string = "#9bbc0f";
+
 class MonochromeRenderer {
   private canvas: HTMLCanvasElement ;
   private ctx: CanvasRenderingContext2D;
@@ -13,8 +18,7 @@ class MonochromeRenderer {
     this.ctx = canvas.getContext("2d");
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.blockSize = 20;
-    this.strokeWidth = 5;
+    this.blockSize = this.canvas.height / 20;
   }
 
   public renderBoard(board: Board) {
@@ -51,13 +55,31 @@ class MonochromeRenderer {
       }
     }
   }
+  private fillRect(color: string, x: number, y: number, w: number , h: number) {
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(x, y, w, h);
+  }
 
   private renderTetrisTypeO(xOffset: number, yOffset: number, row: number, col: number) {
     const x: number = col * this.blockSize + xOffset;
     const y: number = row * this.blockSize + yOffset;
 
-    this.ctx.fillStyle = "pink";
-    this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
+    const stroke: number = this.blockSize / 8;
+    this.fillRect(darkest, x, y, this.blockSize, this.blockSize);
+    this.fillRect(
+      lightest,
+      x + stroke,
+      y + stroke,
+      this.blockSize - (stroke * 2),
+      this.blockSize - (stroke * 2),
+    );
+    this.fillRect(
+      darkest,
+      x + (stroke * 2),
+      y + (stroke * 2),
+      this.blockSize - (stroke * 4),
+      this.blockSize - (stroke * 4),
+    );
   }
 
   private renderTetrisTypeI(xOffset: number, yOffset: number, row: number, col: number) {
@@ -103,9 +125,24 @@ class MonochromeRenderer {
   private renderTetrisTypeS(xOffset: number, yOffset: number, row: number, col: number) {
     const x: number = col * this.blockSize + xOffset;
     const y: number = row * this.blockSize + yOffset;
+    const stroke: number = this.blockSize / 8;
 
-    this.ctx.fillStyle = "pink";
-    this.ctx.fillRect(x, y, this.blockSize, this.blockSize);
+    this.fillRect(darkest, x, y, this.blockSize, this.blockSize);
+    this.fillRect(dark, x + stroke, y + stroke, this.blockSize - (stroke * 2), this.blockSize - (stroke * 2));
+    this.fillRect(
+      darkest,
+      x + (stroke * 2),
+      y + (stroke * 2),
+      this.blockSize - (stroke * 4),
+      this.blockSize - (stroke * 4),
+    );
+    this.fillRect(
+      lightest,
+      x + (stroke * 3),
+      y + (stroke * 3),
+      this.blockSize - (stroke * 6),
+      this.blockSize - (stroke * 6),
+    );
   }
 }
 
