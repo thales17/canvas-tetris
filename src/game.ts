@@ -19,6 +19,16 @@ class Game {
       requestAnimationFrame(render);
     };
     this.randomBoard();
+    window.addEventListener("keydown", (e: KeyboardEvent) => {
+      const keyCode = e.keyCode;
+      if (keyCode === 82) {
+        if (this.renderer instanceof DefaultRenderer) {
+          this.renderer = new MonochromeRenderer(canvas);
+        } else {
+          this.renderer = new DefaultRenderer(canvas);
+        }
+      }
+    });
     render();
   }
 

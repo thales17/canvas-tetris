@@ -1,8 +1,8 @@
 import Game from "./game";
 
 // TODO:
-// Implement the drawing functions for the monochrome renderer
-// Setup the monochrome renderer to accept a base color
+// Create tetrinomno class for the individual pieces
+// Updated the renderers to accept both the tretrinomno and the board for rendering
 
 const canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
 const game = new Game(canvas);
