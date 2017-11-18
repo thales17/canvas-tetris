@@ -13,7 +13,7 @@ class DefaultRenderer {
     this.ctx = canvas.getContext("2d");
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.blockSize = 20;
+    this.blockSize = this.canvas.height / 20;
     this.typeColors = [];
     this.typeColors[TetrisType.O] = "yellow";
     this.typeColors[TetrisType.I] = "cyan";
