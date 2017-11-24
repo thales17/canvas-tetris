@@ -3,6 +3,7 @@ import DefaultRenderer from "./defaultRenderer";
 import GridCell from "./gridCell";
 import IRenderer from "./irenderer";
 import MonochromeRenderer from "./monochromeRenderer";
+import Tetrimino from "./tetrimino";
 import TetrisType from "./tetrisType";
 
 class Game {
@@ -13,12 +14,13 @@ class Game {
     this.canvas = canvas;
     this.renderer = new DefaultRenderer(canvas);
     this.board = new Board();
+    this.board.setTetrimino(Tetrimino.randomTetrimino());
     const render = () => {
       // this.randomBoard();
       this.renderer.renderBoard(this.board);
       requestAnimationFrame(render);
     };
-    this.randomBoard();
+    // this.randomBoard();
     window.addEventListener("keydown", (e: KeyboardEvent) => {
       const keyCode = e.keyCode;
       if (keyCode === 82) {
