@@ -1,7 +1,9 @@
 import Board from "./board";
+import Command from "./command";
 import DefaultRenderer from "./defaultRenderer";
 import GridCell from "./gridCell";
 import IRenderer from "./irenderer";
+import KeyboardInputHandler from "./keyboardInputHandler";
 import MonochromeRenderer from "./monochromeRenderer";
 import Tetrimino from "./tetrimino";
 import TetrisType from "./tetrisType";
@@ -10,27 +12,33 @@ class Game {
   private canvas: HTMLCanvasElement;
   private renderer: IRenderer;
   private board: Board;
+  private keyboardInputHandler: KeyboardInputHandler;
+
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.renderer = new DefaultRenderer(canvas);
+
     this.board = new Board();
     this.board.setTetrimino(Tetrimino.randomTetrimino());
+
+    this.keyboardInputHandler = new KeyboardInputHandler();
+    this.keyboardInputHandler.setCommandForKeyCode(32, new Command(() => {
+      if (this.renderer instanceof DefaultRenderer) {
+        this.renderer = new MonochromeRenderer(canvas);
+      } else {
+        this.renderer = new DefaultRenderer(canvas);
+      }
+    }));
+
     const render = () => {
-      // this.randomBoard();
+      const commands = this.keyboardInputHandler.handleInput();
+      for (const command of commands) {
+        command.execute();
+      }
       this.renderer.renderBoard(this.board);
       requestAnimationFrame(render);
     };
-    // this.randomBoard();
-    window.addEventListener("keydown", (e: KeyboardEvent) => {
-      const keyCode = e.keyCode;
-      if (keyCode === 82) {
-        if (this.renderer instanceof DefaultRenderer) {
-          this.renderer = new MonochromeRenderer(canvas);
-        } else {
-          this.renderer = new DefaultRenderer(canvas);
-        }
-      }
-    });
+
     render();
   }
 
