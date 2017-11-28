@@ -1,4 +1,5 @@
 import GridCell from "./gridCell";
+import Point from "./Point";
 import Tetrimino from "./tetrimino";
 
 class Board {
@@ -46,6 +47,26 @@ class Board {
 
   public getTetrimino(): Tetrimino {
     return this.tetrimino;
+  }
+
+  public arePointsClear(points: Point[]): boolean {
+    for (const point of points) {
+      if (point.x < 0 || point.x > (this.width - 1)) {
+        return false;
+      }
+      if (point.y < 0 || point.y > (this.height - 1)) {
+        return false;
+      }
+
+      const index = this.indexForRowCol(point.y, point.x);
+      if (index === null || index === undefined) {
+        return false;
+      }
+      if (this.data[index]) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 

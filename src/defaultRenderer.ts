@@ -25,6 +25,7 @@ class DefaultRenderer {
   }
 
   public renderBoard(board: Board) {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     const xOffset: number = (this.canvas.width - (board.width * this.blockSize)) / 2;
     const yOffset: number = (this.canvas.height - (board.height * this.blockSize)) / 2;
     for (let r = 0; r < board.height; r++) {

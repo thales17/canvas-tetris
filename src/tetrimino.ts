@@ -102,6 +102,18 @@ class Tetrimino {
 
     return false;
   }
+
+  public translatePointsBy(offset: Point): Point[] {
+    return this.points[this.rotateIndex].map((point: Point, index: number): Point => {
+      return new Point(point.x + this.point.x + offset.x, point.y + this.point.y + offset.y);
+    });
+  }
+
+  public moveBy(offset: Point) {
+    this.point.x += offset.x;
+    this.point.y += offset.y;
+  }
+
 }
 
 export default Tetrimino;
