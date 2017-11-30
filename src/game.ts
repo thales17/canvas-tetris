@@ -32,7 +32,7 @@ class Game {
     }));
     // Up
     this.keyboardInputHandler.setCommandForKeyCode(38, new Command(() => {
-      this.tetrimino.rotate();
+      this.rotateTetriminoIfClear();
     }));
     // Left
     this.keyboardInputHandler.setCommandForKeyCode(37, new Command(() => {
@@ -46,6 +46,14 @@ class Game {
     this.keyboardInputHandler.setCommandForKeyCode(40, new Command(() => {
       this.moveTetriminoIfClear(new Point(0, 1));
     }));
+
+    setInterval(() => {
+      if (!this.moveTetriminoIfClear(new Point(0, 1))) {
+        this.board.absorbTetrimino();
+        this.tetrimino = Tetrimino.randomTetrimino();
+        this.board.setTetrimino(this.tetrimino);
+      }
+    }, 500);
 
     const render = () => {
       this.handleInputs();
@@ -69,6 +77,16 @@ class Game {
     for (const command of commands) {
       command.execute();
     }
+  }
+
+  private rotateTetriminoIfClear(): boolean {
+    const rotatePoints = this.tetrimino.rotatePoints();
+    if (this.board.arePointsClear(rotatePoints)) {
+      this.tetrimino.rotate();
+      return true;
+    }
+
+    return false;
   }
 
   private moveTetriminoIfClear(offset: Point): boolean {

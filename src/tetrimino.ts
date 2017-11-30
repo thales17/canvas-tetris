@@ -109,6 +109,14 @@ class Tetrimino {
     });
   }
 
+  public rotatePoints(): Point[] {
+    let nextRotation = this.rotateIndex + 1;
+    nextRotation %= this.points.length;
+    return this.points[nextRotation].map((point: Point, index: number): Point => {
+      return new Point(point.x + this.point.x, point.y + this.point.y);
+    });
+  }
+
   public moveBy(offset: Point) {
     this.point.x += offset.x;
     this.point.y += offset.y;

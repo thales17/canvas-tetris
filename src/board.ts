@@ -68,6 +68,20 @@ class Board {
     }
     return true;
   }
+
+  public absorbTetrimino() {
+    if (!this.tetrimino) {
+      return;
+    }
+
+    const points = this.tetrimino.currentPoints();
+    for (const point of points) {
+      const index = this.indexForRowCol(point.y, point.x);
+      if (index > 0 && index < this.data.length) {
+        this.data[index] = new GridCell(this.tetrimino.tetrisType);
+      }
+    }
+  }
 }
 
 export default Board;

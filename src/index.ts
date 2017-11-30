@@ -1,10 +1,11 @@
 import Game from "./game";
 
 // TODO:
-// Add check point function to the board.
-// Implement move functions for the tetrimino
-// Add gravity to the board
 // Add line detection to the game board
+// Add game over detection
+// Add fall function for tetrimino
+// Add better definition to pieces in the default renderer
+// Add UI
 
 const canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
 const game = new Game(canvas);
