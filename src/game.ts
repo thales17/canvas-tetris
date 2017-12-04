@@ -56,6 +56,7 @@ class Game {
     }, 500);
 
     const render = () => {
+      this.board.clearLines();
       this.handleInputs();
       this.renderer.renderBoard(this.board);
       requestAnimationFrame(render);

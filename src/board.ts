@@ -1,5 +1,5 @@
 import GridCell from "./gridCell";
-import Point from "./Point";
+import Point from "./point";
 import Tetrimino from "./tetrimino";
 
 class Board {
@@ -51,18 +51,7 @@ class Board {
 
   public arePointsClear(points: Point[]): boolean {
     for (const point of points) {
-      if (point.x < 0 || point.x > (this.width - 1)) {
-        return false;
-      }
-      if (point.y < 0 || point.y > (this.height - 1)) {
-        return false;
-      }
-
-      const index = this.indexForRowCol(point.y, point.x);
-      if (index === null || index === undefined) {
-        return false;
-      }
-      if (this.data[index]) {
+      if (!this.isPointClear(point)) {
         return false;
       }
     }
@@ -81,6 +70,55 @@ class Board {
         this.data[index] = new GridCell(this.tetrimino.tetrisType);
       }
     }
+  }
+
+  public clearLines(): number {
+    let clearCount: number = 0;
+    for (let i: number = this.height - 1; i >= 0; i--) {
+      for (let j: number = 0; j < this.width; j++) {
+        const point: Point = new Point(j, i);
+        if (this.isPointClear(point)) {
+          break;
+        }
+
+        if (j === this.width - 1) {
+          clearCount++;
+          this.clearRow(i);
+        }
+      }
+    }
+    return 0;
+  }
+
+  private isPointClear(point: Point): boolean {
+    if (point.x < 0 || point.x > (this.width - 1)) {
+      return false;
+    }
+    if (point.y < 0 || point.y > (this.height - 1)) {
+      return false;
+    }
+
+    const index = this.indexForRowCol(point.y, point.x);
+    if (index === null || index === undefined) {
+      return false;
+    }
+    if (this.data[index]) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private clearRow(row: number) {
+    for (let j: number = 0; j < this.width; j++) {
+      if (this.indexForRowCol(row, j)) {
+        this.data[this.indexForRowCol(row, j)] = null;
+      }
+    }
+  }
+
+  private moveBlocksDownFrom(row: number) {
+    console.log("Implment, moveBlocksdownFromRow");
   }
 }
 
