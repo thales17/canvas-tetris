@@ -84,6 +84,7 @@ class Board {
         if (j === this.width - 1) {
           clearCount++;
           this.clearRow(i);
+          this.moveBlocksDownFrom(i);
         }
       }
     }
@@ -118,7 +119,16 @@ class Board {
   }
 
   private moveBlocksDownFrom(row: number) {
-    console.log("Implment, moveBlocksdownFromRow");
+    for (let i: number = row - 1; i >= 0; i--) {
+      for (let j: number = 0; j < this.width; j++) {
+        const index = this.indexForRowCol(i, j);
+        if (this.data[index]) {
+          const newIndex = this.indexForRowCol(i + 1, j);
+          this.data[newIndex] = this.data[index];
+          this.data[index] = null;
+        }
+      }
+    }
   }
 }
 
