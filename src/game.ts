@@ -15,6 +15,7 @@ class Game {
   private tetrimino: Tetrimino;
   private board: Board;
   private keyboardInputHandler: KeyboardInputHandler;
+  private timerID: number;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -47,11 +48,16 @@ class Game {
       this.moveTetriminoIfClear(new Point(0, 1));
     }));
 
-    setInterval(() => {
+    this.timerID = setInterval(() => {
       if (!this.moveTetriminoIfClear(new Point(0, 1))) {
+
         this.board.absorbTetrimino();
         this.tetrimino = Tetrimino.randomTetrimino();
         this.board.setTetrimino(this.tetrimino);
+        if (!this.board.arePointsClear(this.tetrimino.currentPoints())) {
+          clearInterval(this.timerID);
+          console.log("Game over");
+        }
       }
     }, 500);
 
