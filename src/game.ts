@@ -28,8 +28,17 @@ class Game {
     this.board.setTetrimino(this.tetrimino);
 
     this.keyboardInputHandler = new KeyboardInputHandler();
-    this.keyboardInputHandler.setCommandForKeyCode(32, new Command(() => {
-      this.nextRenderer();
+    // 1
+    this.keyboardInputHandler.setCommandForKeyCode(49, new Command(() => {
+      if (!(this.renderer instanceof DefaultRenderer)) {
+        this.renderer = new DefaultRenderer(this.canvas);
+      }
+    }));
+    // 2
+    this.keyboardInputHandler.setCommandForKeyCode(50, new Command(() => {
+      if (!(this.renderer instanceof MonochromeRenderer)) {
+        this.renderer = new MonochromeRenderer(this.canvas);
+      }
     }));
     // Up
     this.keyboardInputHandler.setCommandForKeyCode(38, new Command(() => {
@@ -47,17 +56,14 @@ class Game {
     this.keyboardInputHandler.setCommandForKeyCode(40, new Command(() => {
       this.moveTetriminoIfClear(new Point(0, 1));
     }));
+    // Space
+    this.keyboardInputHandler.setCommandForKeyCode(32, new Command(() => {
+      this.dropTetrimino();
+    }));
 
     this.timerID = setInterval(() => {
       if (!this.moveTetriminoIfClear(new Point(0, 1))) {
-
-        this.board.absorbTetrimino();
-        this.tetrimino = Tetrimino.randomTetrimino();
-        this.board.setTetrimino(this.tetrimino);
-        if (!this.board.arePointsClear(this.tetrimino.currentPoints())) {
-          clearInterval(this.timerID);
-          console.log("Game over");
-        }
+        this.nextTetrimino();
       }
     }, 500);
 
@@ -71,11 +77,13 @@ class Game {
     render();
   }
 
-  private nextRenderer() {
-    if (this.renderer instanceof DefaultRenderer) {
-      this.renderer = new MonochromeRenderer(this.canvas);
-    } else {
-      this.renderer = new DefaultRenderer(this.canvas);
+  private nextTetrimino() {
+    this.board.absorbTetrimino();
+    this.tetrimino = Tetrimino.randomTetrimino();
+    this.board.setTetrimino(this.tetrimino);
+    if (!this.board.arePointsClear(this.tetrimino.currentPoints())) {
+      clearInterval(this.timerID);
+      console.log("Game over");
     }
   }
 
@@ -104,6 +112,16 @@ class Game {
     }
 
     return false;
+  }
+
+  private dropTetrimino() {
+    const offset: Point = new Point(0, 1);
+    while (this.board.arePointsClear(this.tetrimino.translatePointsBy(offset))) {
+      offset.y++;
+    }
+    offset.y--;
+    this.tetrimino.moveBy(offset);
+    this.nextTetrimino();
   }
 
   private randomBoard() {
