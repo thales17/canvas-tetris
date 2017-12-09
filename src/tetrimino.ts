@@ -69,6 +69,17 @@ class Tetrimino {
     return points;
   }
 
+  private static centerLeftForTetrisType(tetrisType: TetrisType): number {
+    let centerLeft = 0;
+    if (tetrisType === TetrisType.I) {
+      centerLeft = 3;
+    } else {
+      centerLeft = 4;
+    }
+
+    return centerLeft;
+  }
+
   public tetrisType: TetrisType;
   public points: Point[][];
   private rotateIndex: number;
@@ -78,7 +89,7 @@ class Tetrimino {
     this.tetrisType = tetrisType;
     this.points = Tetrimino.pointsDataForTetrisType(this.tetrisType);
     this.rotateIndex = 0;
-    this.point = new Point(0, 0);
+    this.point = new Point(Tetrimino.centerLeftForTetrisType(this.tetrisType), 0);
   }
 
   public rotate() {
