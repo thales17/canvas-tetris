@@ -3,7 +3,8 @@ import Command from "./command";
 import DefaultRenderer from "./defaultRenderer";
 import GridCell from "./gridCell";
 import IRenderer from "./irenderer";
-import KeyboardInputHandler from "./keyboardInputHandler";
+import KeyClickInputHandler from "./keyClickInputHandler";
+import KeyDownInputHandler from "./keyDownInputHandler";
 import MonochromeRenderer from "./monochromeRenderer";
 import Point from "./point";
 import Tetrimino from "./tetrimino";
@@ -14,8 +15,10 @@ class Game {
   private renderer: IRenderer;
   private tetrimino: Tetrimino;
   private board: Board;
-  private keyboardInputHandler: KeyboardInputHandler;
+  private player1InputHandler: KeyDownInputHandler;
+  private uiKeyboardInputHandler: KeyClickInputHandler;
   private timerID: number;
+  private paused: boolean;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -27,41 +30,71 @@ class Game {
     this.board = new Board();
     this.board.setTetrimino(this.tetrimino);
 
-    this.keyboardInputHandler = new KeyboardInputHandler();
+    this.player1InputHandler = new KeyDownInputHandler();
+    // Up
+    this.player1InputHandler.setCommandForKeyCode(38, new Command(() => {
+      if (this.paused) {
+        return;
+      }
+      this.rotateTetriminoIfClear();
+    }));
+    // Left
+    this.player1InputHandler.setCommandForKeyCode(37, new Command(() => {
+      if (this.paused) {
+        return;
+      }
+      this.moveTetriminoIfClear(new Point(-1, 0));
+    }));
+    // Right
+    this.player1InputHandler.setCommandForKeyCode(39, new Command(() => {
+      if (this.paused) {
+        return;
+      }
+      this.moveTetriminoIfClear(new Point(1, 0));
+    }));
+    // Down
+    this.player1InputHandler.setCommandForKeyCode(40, new Command(() => {
+      if (this.paused) {
+        return;
+      }
+      this.moveTetriminoIfClear(new Point(0, 1));
+    }));
+    // Space
+    this.player1InputHandler.setCommandForKeyCode(32, new Command(() => {
+      if (this.paused) {
+        return;
+      }
+      this.dropTetrimino();
+    }));
+
+    this.uiKeyboardInputHandler = new KeyClickInputHandler();
     // 1
-    this.keyboardInputHandler.setCommandForKeyCode(49, new Command(() => {
+    this.uiKeyboardInputHandler.setCommandForKeyCode(49, new Command(() => {
       if (!(this.renderer instanceof DefaultRenderer)) {
         this.renderer = new DefaultRenderer(this.canvas);
       }
     }));
     // 2
-    this.keyboardInputHandler.setCommandForKeyCode(50, new Command(() => {
+    this.uiKeyboardInputHandler.setCommandForKeyCode(50, new Command(() => {
       if (!(this.renderer instanceof MonochromeRenderer)) {
         this.renderer = new MonochromeRenderer(this.canvas);
       }
     }));
-    // Up
-    this.keyboardInputHandler.setCommandForKeyCode(38, new Command(() => {
-      this.rotateTetriminoIfClear();
-    }));
-    // Left
-    this.keyboardInputHandler.setCommandForKeyCode(37, new Command(() => {
-      this.moveTetriminoIfClear(new Point(-1, 0));
-    }));
-    // Right
-    this.keyboardInputHandler.setCommandForKeyCode(39, new Command(() => {
-      this.moveTetriminoIfClear(new Point(1, 0));
-    }));
-    // Down
-    this.keyboardInputHandler.setCommandForKeyCode(40, new Command(() => {
-      this.moveTetriminoIfClear(new Point(0, 1));
-    }));
-    // Space
-    this.keyboardInputHandler.setCommandForKeyCode(32, new Command(() => {
-      this.dropTetrimino();
+
+    // P
+    this.uiKeyboardInputHandler.setCommandForKeyCode(80, new Command(() => {
+      this.paused = !this.paused;
+      if (this.paused) {
+        console.log("Paused");
+      } else {
+        console.log("Unpaused");
+      }
     }));
 
     this.timerID = setInterval(() => {
+      if (this.paused) {
+        return;
+      }
       if (!this.moveTetriminoIfClear(new Point(0, 1))) {
         this.nextTetrimino();
       }
@@ -88,7 +121,9 @@ class Game {
   }
 
   private handleInputs() {
-    const commands = this.keyboardInputHandler.handleInput();
+    let commands: Command[];
+    commands = this.uiKeyboardInputHandler.handleInput();
+    commands = commands.concat(this.player1InputHandler.handleInput());
     for (const command of commands) {
       command.execute();
     }

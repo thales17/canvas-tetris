@@ -1,7 +1,6 @@
 import Game from "./game";
 
 // TODO:
-// Add pause state
 // Add restart key combo
 // Add 5 move after the piece cannot move down, if there is input in the buffer, otherwise drop the next piece
 // Add next tetris piece "tape", list of the next 5 random tetriminos
