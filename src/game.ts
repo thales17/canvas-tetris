@@ -25,10 +25,7 @@ class Game {
 
     this.renderer = new DefaultRenderer(canvas);
 
-    this.tetrimino = Tetrimino.randomTetrimino();
-
-    this.board = new Board();
-    this.board.setTetrimino(this.tetrimino);
+    this.setupGame();
 
     this.player1InputHandler = new KeyDownInputHandler();
     // Up
@@ -91,14 +88,10 @@ class Game {
       }
     }));
 
-    this.timerID = setInterval(() => {
-      if (this.paused) {
-        return;
-      }
-      if (!this.moveTetriminoIfClear(new Point(0, 1))) {
-        this.nextTetrimino();
-      }
-    }, 500);
+    // =
+    this.uiKeyboardInputHandler.setCommandForKeyCode(187, new Command(() => {
+      this.setupGame();
+    }));
 
     const render = () => {
       this.board.clearLines();
@@ -117,6 +110,7 @@ class Game {
     if (!this.board.arePointsClear(this.tetrimino.currentPoints())) {
       clearInterval(this.timerID);
       console.log("Game over");
+      this.setupGame();
     }
   }
 
@@ -175,6 +169,23 @@ class Game {
         this.board.setGridCell(new GridCell(randomType), r, c);
       }
     }
+  }
+
+  private setupGame() {
+    this.tetrimino = Tetrimino.randomTetrimino();
+
+    this.board = new Board();
+    this.board.setTetrimino(this.tetrimino);
+
+    clearInterval(this.timerID);
+    this.timerID = setInterval(() => {
+      if (this.paused) {
+        return;
+      }
+      if (!this.moveTetriminoIfClear(new Point(0, 1))) {
+        this.nextTetrimino();
+      }
+    }, 500);
   }
 }
 
