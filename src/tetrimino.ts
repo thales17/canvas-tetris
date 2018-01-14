@@ -1,6 +1,7 @@
 import Point from "./point";
 import TetrisType from "./tetrisType";
 
+const randomTetriminos: Tetrimino[] = [];
 class Tetrimino {
   public static randomTetrimino(): Tetrimino {
     const tetrisTypes = [
@@ -12,7 +13,16 @@ class Tetrimino {
       TetrisType.T,
       TetrisType.Z,
     ];
-    return new Tetrimino(tetrisTypes[Math.floor(Math.random() * tetrisTypes.length)]);
+    const typeCount = tetrisTypes.length;
+    if (randomTetriminos.length < typeCount) {
+      const addAmount = typeCount - randomTetriminos.length;
+      for (let i = 0; i < addAmount; i++) {
+        const index = Math.floor(Math.random() * tetrisTypes.length);
+        randomTetriminos.push(new Tetrimino(tetrisTypes[index]));
+        tetrisTypes.splice(index, 1);
+      }
+    }
+    return randomTetriminos.splice(0, 1)[0];
   }
 
   private static pointsDataForTetrisType(tetrisType: TetrisType): Point[][] {

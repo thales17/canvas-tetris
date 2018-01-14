@@ -1,17 +1,16 @@
 import Game from "./game";
 
 // TODO:
-// Add restart key
-// Add 5 move after the piece cannot move down, if there is input in the buffer, otherwise drop the next piece
-// Add next tetris piece "tape", list of the next 5 random tetriminos
+// Line clear animation
+// Add ghost piece (http://tetris.wikia.com/wiki/Ghost_piece)
+// Add hold
 // Add scoring
 // Add levels
-// Add hold
 // Add sound
 // Add UI
   // Updated renderers to use relative sizing and respond to window resize events
   // Add border to the board
-  // Upcoming tetrimino
+  // Upcoming tetrimino (1-6)
   // Hold UI
   // Pause indicator
   // Level indicator
