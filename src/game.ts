@@ -10,6 +10,13 @@ import Point from "./point";
 import Tetrimino from "./tetrimino";
 import TetrisType from "./tetrisType";
 
+enum GameState {
+  Playing,
+  WaitingForNextTetrimino,
+  LineClear,
+  GameOver,
+}
+
 class Game {
   private canvas: HTMLCanvasElement;
   private renderer: IRenderer;
@@ -18,6 +25,8 @@ class Game {
   private player1InputHandler: KeyDownInputHandler;
   private uiKeyboardInputHandler: KeyClickInputHandler;
   private timerID: number;
+  private state: GameState;
+  private frameDelay: number;
   private paused: boolean;
 
   constructor(canvas: HTMLCanvasElement) {
@@ -27,42 +36,50 @@ class Game {
 
     this.setupGame();
 
+    /* Begin Input Handler Code */
     this.player1InputHandler = new KeyDownInputHandler();
-    // Up
-    this.player1InputHandler.setCommandForKeyCode(38, new Command(() => {
-      if (this.paused) {
-        return;
-      }
-      this.rotateTetriminoIfClear();
-    }));
-    // Left
-    this.player1InputHandler.setCommandForKeyCode(37, new Command(() => {
-      if (this.paused) {
-        return;
-      }
-      this.moveTetriminoIfClear(new Point(-1, 0));
-    }));
-    // Right
-    this.player1InputHandler.setCommandForKeyCode(39, new Command(() => {
-      if (this.paused) {
-        return;
-      }
-      this.moveTetriminoIfClear(new Point(1, 0));
-    }));
-    // Down
-    this.player1InputHandler.setCommandForKeyCode(40, new Command(() => {
-      if (this.paused) {
-        return;
-      }
-      this.moveTetriminoIfClear(new Point(0, 1));
-    }));
-    // Space
-    this.player1InputHandler.setCommandForKeyCode(32, new Command(() => {
-      if (this.paused) {
-        return;
-      }
-      this.dropTetrimino();
-    }));
+
+    const playerKeys = {
+      Down: 40, // Down Arrow
+      Drop: 32, // Space
+      Left: 37,  // Left Arrow
+      Right: 39, // Right Arrow
+      Rotate: 38, // Up Arrow
+    };
+    this.player1InputHandler.setCommandForKeyCode(
+      playerKeys.Rotate,
+      new Command(this.inputHandler(() => {
+        this.rotateTetriminoIfClear();
+      }),
+    ));
+
+    this.player1InputHandler.setCommandForKeyCode(
+      playerKeys.Left,
+      new Command(this.inputHandler(() => {
+         this.moveTetriminoIfClear(new Point(-1, 0));
+      }),
+    ));
+
+    this.player1InputHandler.setCommandForKeyCode(
+      playerKeys.Right,
+      new Command(this.inputHandler(() => {
+        this.moveTetriminoIfClear(new Point(1, 0));
+      }),
+    ));
+
+    this.player1InputHandler.setCommandForKeyCode(
+      playerKeys.Down,
+      new Command(this.inputHandler(() => {
+        this.moveTetriminoIfClear(new Point(0, 1));
+      }),
+    ));
+
+    this.player1InputHandler.setCommandForKeyCode(
+      playerKeys.Drop,
+      new Command(this.inputHandler(() => {
+        this.dropTetrimino();
+      }),
+    ));
 
     this.uiKeyboardInputHandler = new KeyClickInputHandler();
     // 1
@@ -92,6 +109,7 @@ class Game {
     this.uiKeyboardInputHandler.setCommandForKeyCode(187, new Command(() => {
       this.setupGame();
     }));
+    /* END Input Handler Code */
 
     const render = () => {
       this.board.clearLines();
@@ -101,6 +119,15 @@ class Game {
     };
 
     render();
+  }
+
+  private inputHandler(fn: () => void): () => void {
+    return () => {
+      if (this.state !== GameState.Playing || this.paused) {
+        return;
+      }
+      fn();
+    };
   }
 
   private nextTetrimino() {
@@ -176,7 +203,8 @@ class Game {
 
     this.board = new Board();
     this.board.setTetrimino(this.tetrimino);
-
+    this.state = GameState.Playing;
+    this.paused = false;
     clearInterval(this.timerID);
     this.timerID = setInterval(() => {
       if (this.paused) {

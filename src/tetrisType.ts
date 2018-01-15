@@ -6,6 +6,7 @@ enum TetrisType {
   T,
   Z,
   S,
+  Clear,
 }
 
 export default TetrisType;

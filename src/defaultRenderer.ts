@@ -22,6 +22,7 @@ class DefaultRenderer {
     this.typeColors[TetrisType.S] = "green";
     this.typeColors[TetrisType.T] = "purple";
     this.typeColors[TetrisType.Z] = "red";
+    this.typeColors[TetrisType.Clear] = "white";
   }
 
   public renderBoard(board: Board) {
