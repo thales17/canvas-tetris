@@ -17,6 +17,11 @@ enum GameState {
   GameOver,
 }
 
+enum AppState {
+  Playing,
+  Paused,
+}
+
 class Game {
   private canvas: HTMLCanvasElement;
   private renderer: IRenderer;
@@ -24,10 +29,11 @@ class Game {
   private board: Board;
   private player1InputHandler: KeyDownInputHandler;
   private uiKeyboardInputHandler: KeyClickInputHandler;
-  private timerID: number;
-  private state: GameState;
+  private gameState: GameState;
+  private appState: AppState;
+  private currentFrame: number;
   private frameDelay: number;
-  private paused: boolean;
+  private lineClearDelay: number;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -36,6 +42,45 @@ class Game {
 
     this.setupGame();
 
+    const update = () => {
+      if (this.appState === AppState.Paused) {
+        return;
+      }
+      this.currentFrame++;
+      if (this.currentFrame >= this.frameDelay) {
+        this.currentFrame = 0;
+        if (this.gameState === GameState.Playing) {
+          if (!this.moveTetriminoIfClear(new Point(0, 1))) {
+            this.nextTetrimino();
+          }
+        }
+      }
+    };
+
+    const render = () => {
+      update();
+      this.board.clearLines();
+      this.handleInputs();
+      this.renderer.renderBoard(this.board);
+      requestAnimationFrame(render);
+    };
+
+    render();
+  }
+
+  private setupGame() {
+    this.tetrimino = Tetrimino.randomTetrimino();
+    this.board = new Board();
+    this.board.setTetrimino(this.tetrimino);
+    this.gameState = GameState.Playing;
+    this.appState = AppState.Playing;
+    this.currentFrame = 0;
+    this.frameDelay = 60;
+    this.lineClearDelay = 60;
+    this.setupInput();
+  }
+
+  private setupInput() {
     /* Begin Input Handler Code */
     this.player1InputHandler = new KeyDownInputHandler();
 
@@ -56,7 +101,7 @@ class Game {
     this.player1InputHandler.setCommandForKeyCode(
       playerKeys.Left,
       new Command(this.inputHandler(() => {
-         this.moveTetriminoIfClear(new Point(-1, 0));
+          this.moveTetriminoIfClear(new Point(-1, 0));
       }),
     ));
 
@@ -97,11 +142,10 @@ class Game {
 
     // P
     this.uiKeyboardInputHandler.setCommandForKeyCode(80, new Command(() => {
-      this.paused = !this.paused;
-      if (this.paused) {
-        console.log("Paused");
+      if (this.appState === AppState.Paused) {
+        this.appState = AppState.Playing;
       } else {
-        console.log("Unpaused");
+        this.appState = AppState.Paused;
       }
     }));
 
@@ -109,21 +153,11 @@ class Game {
     this.uiKeyboardInputHandler.setCommandForKeyCode(187, new Command(() => {
       this.setupGame();
     }));
-    /* END Input Handler Code */
-
-    const render = () => {
-      this.board.clearLines();
-      this.handleInputs();
-      this.renderer.renderBoard(this.board);
-      requestAnimationFrame(render);
-    };
-
-    render();
   }
 
   private inputHandler(fn: () => void): () => void {
     return () => {
-      if (this.state !== GameState.Playing || this.paused) {
+      if (this.gameState !== GameState.Playing || this.appState === AppState.Paused) {
         return;
       }
       fn();
@@ -135,8 +169,7 @@ class Game {
     this.tetrimino = Tetrimino.randomTetrimino();
     this.board.setTetrimino(this.tetrimino);
     if (!this.board.arePointsClear(this.tetrimino.currentPoints())) {
-      clearInterval(this.timerID);
-      console.log("Game over");
+      // console.log("Game over");
       this.setupGame();
     }
   }
@@ -196,24 +229,6 @@ class Game {
         this.board.setGridCell(new GridCell(randomType), r, c);
       }
     }
-  }
-
-  private setupGame() {
-    this.tetrimino = Tetrimino.randomTetrimino();
-
-    this.board = new Board();
-    this.board.setTetrimino(this.tetrimino);
-    this.state = GameState.Playing;
-    this.paused = false;
-    clearInterval(this.timerID);
-    this.timerID = setInterval(() => {
-      if (this.paused) {
-        return;
-      }
-      if (!this.moveTetriminoIfClear(new Point(0, 1))) {
-        this.nextTetrimino();
-      }
-    }, 500);
   }
 }
 
